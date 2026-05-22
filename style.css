@@ -1,0 +1,795 @@
+:root {
+    --dot-size: 14px;
+    --cell-size: 90px;
+    --p1-color: #ff4b4b;
+    --p2-color: #1e90ff;
+    --bg-color: #1e1e24;
+    --card-bg: #2a2a35;
+    /* This variable will be adjusted dynamically by JS */
+    --line-thickness: 6px; 
+}
+
+/* ========================================================
+   CRITICAL LANDSCAPE & ACCORDION OVERLAP FIX
+   ======================================================== */
+
+/* Force body to fit perfectly inside mobile view bounds */
+body {
+    min-height: 100vh;
+    min-height: -webkit-fill-available; /* Apple iOS height fix */
+    margin: 0;
+    padding: 8px !important;
+    overflow-x: hidden;
+}
+
+/* Make sure the green box shrinks to fit modern screen sizes */
+.game-wrapper {
+    max-height: 94vh !important;
+    padding: 10px !important;
+    gap: 8px !important;
+}
+
+/* Adjust heading sizes when playing in landscape/small screens */
+h1 {
+    font-size: 1.2rem !important;
+    margin: 2px 0 !important;
+}
+
+/* Squeeze the scoreboard metrics so they take up less height */
+.scoreboard {
+    gap: 6px !important;
+    margin-bottom: 4px !important;
+}
+
+.score-card {
+    padding: 6px 10px !important;
+}
+
+.player-score {
+    font-size: 1.2rem !important;
+    margin: 0 !important;
+}
+
+.activity-log {
+    font-size: 0.7rem !important;
+}
+
+/* Keep the mini-map from stealing space from the playable board */
+.minimap-box {
+    margin-top: 4px !important;
+    padding: 4px !important;
+}
+
+.minimap-wrapper {
+    width: 80px !important; /* Scaled down from 120px */
+    height: 80px !important;
+}
+
+/* FORCE INDEPENDENT BOARD CONTAINER PROTECTION CRITERIA */
+.board-container {
+    max-height: 48vh !important; /* Leaves half the screen size open for the board */
+    padding: 6px !important;
+}
+
+/* --- RESPONSIVE LAYOUT MATRIX --- */
+/* --- IN-APP INSTALLATION BUTTON HOVER STATE --- */
+#pwa-install-btn:hover {
+    background-color: #44bd32 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ========================================================
+   ANIMATED INITIAL LAUNCH SPLASH SCREEN STYLES
+   ======================================================== */
+#app-splash-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: #1a1a22;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Higher than everything else, including modals */
+    opacity: 1;
+    transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.5s;
+}
+
+#app-splash-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.splash-logo-container {
+    text-align: center;
+    animation: splashEntrance 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+/* Geometric Logo Mesh Rendering */
+.splash-icon-mesh {
+    width: 90px; height: 90px;
+    margin: 0 auto 20px auto;
+    position: relative;
+    border: 4px dashed #3a3a4c;
+    border-radius: 8px;
+}
+.s-dot {
+    position: absolute; width: 12px; height: 12px;
+    background: #fff; border-radius: 50%;
+}
+.pt-tl { top: -6px; left: -6px; }
+.pt-tr { top: -6px; right: -6px; }
+.pt-bl { bottom: -6px; left: -6px; }
+.pt-br { bottom: -6px; right: -6px; }
+
+.s-box-fill {
+    position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
+    background: rgba(76, 209, 55, 0.2);
+    border: 3px solid #4cd137;
+    border-radius: 6px;
+    color: #4cd137; font-size: 2.5rem; font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    animation: pulseBox 1.5s ease-in-out infinite;
+}
+
+/* Splashed Foreground Typography Name */
+.splash-title {
+    font-size: 1.8rem !important;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    color: #fff;
+    margin: 10px 0 !important;
+    text-transform: uppercase;
+}
+.splash-title span {
+    color: #4cd137;
+    font-weight: 900;
+}
+
+/* Linear Loading Track indicator */
+.splash-loading-bar {
+    width: 140px; height: 4px;
+    background: #2a2a35;
+    margin: 15px auto 0 auto;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+.splash-loading-bar span {
+    display: block; width: 100%; height: 100%;
+    background: #4cd137;
+    transform: translateX(-100%);
+    animation: fillBar 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Animation Timelines */
+@keyframes splashEntrance {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+@keyframes pulseBox {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(76, 209, 55, 0); }
+    50% { transform: scale(1.03); box-shadow: 0 0 12px rgba(76, 209, 55, 0.3); }
+}
+@keyframes fillBar {
+    to { transform: translateX(0); }
+}
+
+
+.body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--bg-color);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 15px;
+    box-sizing: border-box;
+}
+/* Persistent Champion Trophy Indicator text */
+.championship-wins {
+    font-size: 0.75rem;
+    color: #ffd700;
+    font-weight: bold;
+    margin-top: 2px;
+}
+
+.action-btn.danger-outline {
+    background: transparent;
+    border: 1px solid #ff4b4b;
+    color: #ff4b4b;
+    font-size: 0.8rem;
+}
+
+/* --- FIXED: Centered Modals System --- */
+.modal {
+    display: none; 
+    position: fixed; 
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75); 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 100;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.progression-box {
+    background: #2a2a35;
+    border: 2px solid #4cd137;
+    padding: 30px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* --- THEME SELECTOR BUTTON COMPONENTS --- */
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 4px;
+}
+.theme-tile {
+    padding: 6px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    border: 1px solid #444;
+    cursor: pointer;
+    font-weight: bold;
+}
+.theme-tile.default { background: #1e1e24; color: white; }
+.theme-tile.exercise { background: #e0f2fe; color: #0369a1; }
+.theme-tile.brown { background: #d7ccc8; color: #4e342e; }
+.theme-tile.acacia { background: #e8f5e9; color: #2e7d32; }
+.theme-tile.vanilla { background: #fffde7; color: #f57f17; }
+
+/* --- GAMEWALLPAPER VISUAL VISUAL STYLES --- */
+body.theme-exercise { background-color: #f0f9ff; color: #1e293b; }
+body.theme-exercise .game-wrapper { background: #ffffff; border: 2px solid #bae6fd; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+body.theme-exercise .board-container { background: #f8fafc; border-color: #e2e8f0; background-image: linear-gradient(#e2e8f0 1px, transparent 1px); background-size: 100% 20px; }
+body.theme-exercise .dot { background-color: #64748b; }
+body.theme-exercise .line:not(.taken) { background-color: #cbd5e1; }
+
+body.theme-brown { background-color: #5d4037; color: #efebe9; }
+body.theme-brown .game-wrapper { background: #4e342e; border: 1px solid #6d4c41; }
+body.theme-brown .board-container { background: #8d6e63; }
+
+body.theme-acacia { background-color: #2e7d32; color: #e8f5e9; }
+body.theme-acacia .game-wrapper { background: #1b5e20; border: 1px solid #388e3c; }
+body.theme-acacia .board-container { background: #c8e6c9; }
+body.theme-acacia .dot { background-color: #1b5e20; }
+
+body.theme-vanilla { background-color: #fff9c4; color: #424242; }
+body.theme-vanilla .game-wrapper { background: #f5f5f5; border: 1px solid #e0e0e0; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+body.theme-vanilla .board-container { background: #fffde7; border-color: #fff59d; }
+body.theme-vanilla .dot { background-color: #bcaa00; }
+body.theme-vanilla .line:not(.taken) { background-color: #f0f0d0; }
+
+/* ==========================================================================
+   🧱 THEME STYLING PROFILES
+   ========================================================================== */
+
+/* 1. Exercise Book Look: Simulates fine mathematical grid ruling sheets */
+body[data-theme="exercise"] {
+    background-color: #f0f3f5;
+    background-image: 
+        linear-gradient(rgba(30, 144, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 144, 255, 0.15) 1px, transparent 1px);
+    background-size: 20px 20px;
+    color: #2f3640;
+}
+body[data-theme="exercise"] .game-wrapper { background: #ffffff; border: 1px solid #ccc; color: #222; }
+body[data-theme="exercise"] .board-container { background: #fafafa; border: 1px solid #ddd; }
+body[data-theme="exercise"] .dot { background-color: #718093; }
+body[data-theme="exercise"] h1, body[data-theme="exercise"] label { color: #2f3640; }
+
+/* 2. Brown Paper Look: Simulates organic textures of craft fiber sheets */
+body[data-theme="brown-paper"] {
+    background-color: #d7bc95;
+    background-image: radial-gradient(rgba(0,0,0,0.05) 15%, transparent 20%), radial-gradient(rgba(255,255,255,0.1) 15%, transparent 20%);
+    background-size: 4px 4px;
+    color: #3e2723;
+}
+body[data-theme="brown-paper"] .game-wrapper { background: #c6a473; border: 2px solid #a18153; color: #3e2723; }
+body[data-theme="brown-paper"] .board-container { background: #b79564; }
+body[data-theme="brown-paper"] .dot { background-color: #3e2723; }
+body[data-theme="brown-paper"] h1, body[data-theme="brown-paper"] label { color: #3e272 brown; }
+
+/* 3. Acacia Earth Look: Natural safari sage / deep wood blend landscape colors */
+body[data-theme="acacia"] {
+    background: linear-gradient(135deg, #2d4a22 0%, #17300e 100%);
+    color: #f5f6fa;
+}
+body[data-theme="acacia"] .game-wrapper { background: #1c3315; border: 1px solid #3d5e2d; }
+body[data-theme="acacia"] .board-container { background: #12240d; }
+body[data-theme="acacia"] .dot { background-color: #a2b997; }
+
+/* 4. Vanilla Cream Look: Soft, warm minimalistic eye-comfort layout styling */
+body[data-theme="vanilla"] {
+    background-color: #f7f1e3;
+    color: #2c2c54;
+}
+body[data-theme="vanilla"] .game-wrapper { background: #f1e7cc; border: 1px solid #d1ccc0; color: #2c2c54; }
+body[data-theme="vanilla"] .board-container { background: #e5dac1; }
+body[data-theme="vanilla"] .dot { background-color: #474787; }
+body[data-theme="vanilla"] h1, body[data-theme="vanilla"] label { color: #2c2c54; }
+
+/* --- COMPACT RESPONSIVE DASHBOARD LAYOUT --- */
+.game-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: #23232e;
+    padding: 15px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 95vw; /* Bound frame context within viewport scale limits */
+    box-sizing: border-box;
+}
+
+@media (min-width: 900px) and (orientation: landscape) {
+    .game-wrapper {
+        flex-direction: row;
+        max-width: 1200px;
+    }
+}
+
+.dashboard {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Side-by-Side Flex Layout for PC / Landscape Viewports */
+@media (min-width: 768px) and (orientation: landscape) {
+    .game-wrapper {
+        flex-direction: row; /* Side-by-side layout */
+        max-width: 850px;
+        width: auto;
+        padding: 30px;
+    }
+
+    .dashboard {
+        width: 280px;
+    }
+}
+
+/* --- COMPACT ACTION HEADER STYLING --- */
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #2a2a35;
+}
+
+/* --- FLEX FOR TOP RIGHT ACTION HEADER --- */
+.header-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* --- LEADERBOARD SCORE LIST STYLING --- */
+.leaderboard-container {
+    background: #111;
+    border-radius: 8px;
+    padding: 10px 15px;
+    max-height: 220px;
+    overflow-y: auto;
+    margin: 15px 0;
+    text-align: left;
+}
+
+#leaderboard-list {
+    margin: 0;
+    padding-left: 20px;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+#leaderboard-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid #222;
+    font-family: monospace;
+    display: flex;
+    justify-content: space-between;
+}
+
+#leaderboard-list li:last-child {
+    border-bottom: none;
+}
+
+#leaderboard-list li span.score-val {
+    color: #4cd137;
+    font-weight: bold;
+}
+
+
+.branding {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-icon {
+    font-size: 1.5rem;
+    background: #3a3a4c;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+h1 { 
+    margin: 0; 
+    font-size: 1.3rem; 
+    letter-spacing: -0.5px;
+}
+
+.icon-btn {
+    background: #3a3a4c;
+    border: none;
+    font-size: 1.2rem;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.icon-btn:hover { background: #4e4e66; }
+
+/* --- SETTINGS MODAL SPECIALIZED VIEW --- */
+.settings-box {
+    width: 290px;
+    background: #23232e !important;
+    border: 2px solid #4cd137 !important;
+}
+
+.control-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+    margin: 20px 0;
+}
+
+.control-row label {
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+.modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.action-btn {
+    padding: 10px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.action-btn.danger { background: #ff4b4b; color: white; }
+.action-btn.success { background: #4cd137; color: white; }
+.setup-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+select, button {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background: #3a3a4c;
+    color: white;
+    font-size: 1rem;
+}
+
+button#reset-btn {
+    background: #4cd137;
+    cursor: pointer;
+    font-weight: bold;
+}
+/* Compact adjustments for the score section */
+.scoreboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Split side-by-side on mobile mobile */
+    gap: 10px;
+}
+
+@media (min-width: 768px) and (orientation: landscape) {
+    .scoreboard {
+        grid-template-columns: 1fr; /* Stack dashboard cards on desktop */
+        gap: 15px;
+    }
+}
+
+.score-card {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 5px solid #555;
+    transition: all 0.3s ease;
+}
+
+.score-card.p1.active { border-left-color: var(--p1-color); background: #352529; }
+.score-card.p2.active { border-left-color: var(--p2-color); background: #222b3d; }
+
+.player-name { font-size: 0.9rem; color: #aaa; }
+.player-score { font-size: 2rem; font-weight: bold; margin: 5px 0; }
+.activity-log { font-size: 0.8rem; color: #888; }
+
+#status {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 10px;
+    background: #111;
+    border-radius: 6px;
+}
+
+/* --- OVERFLOW AND SCROLL STYLING --- */
+.board-container {
+    display: block;
+    background: #1a1a22;
+    padding: 20px;
+    border-radius: 12px;
+    overflow: auto; /* Active scrolling for 10x10 scale views */
+    max-width: 100%;
+    max-height: 65vh;
+    scrollbar-width: thin;
+    scrollbar-color: #4cd137 #1a1a22;
+}
+
+/* --- THE MINI-MAP RADAR COMPONENT --- */
+.minimap-box {
+    background: #1a1a22;
+    border: 1px solid #3a3a4c;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 15px;
+    text-align: center;
+}
+.minimap-header {
+    font-size: 0.75rem;
+    color: #888;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+.minimap-wrapper {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    position: relative;
+    background: #111;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.minimap-grid {
+    display: grid;
+    gap: 1px;
+    background: #222;
+    width: 100%;
+    height: 100%;
+}
+.mini-cell {
+    background: #2a2a35;
+    transition: background 0.3s;
+}
+/* Mini cells inherit player capture styles */
+.mini-cell.p1 { background: rgba(255, 75, 75, 0.7); }
+.mini-cell.p2 { background: rgba(30, 144, 255, 0.7); }
+/* Ensure the absolute board container does not compress itself down */
+.board {
+    position: relative;
+    margin: 0 auto;
+    /* Dimensions are automatically updated via inline JS calculations below */
+}
+
+.dot {
+    position: absolute;
+    width: var(--dot-size);
+    height: var(--dot-size);
+    background-color: #fff;
+    border-radius: 50%;
+    z-index: 3;
+    transform: translate(0px, 0px);
+}
+
+.line {
+    position: absolute;
+    background-color: #3a3a4c;
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.2s, height 0.3s ease, width 0.3s ease;
+}
+
+.line:hover:not(.taken) { background-color: #575770; }
+
+.line.horizontal {
+    height: var(--line-thickness);
+    width: calc(var(--cell-size) - var(--dot-size));
+    transform: translateY(calc((var(--dot-size) - var(--line-thickness)) / 2));
+}
+
+.line.vertical {
+    width: var(--line-thickness);
+    height: calc(var(--cell-size) - var(--dot-size));
+    transform: translateX(calc((var(--dot-size) - var(--line-thickness)) / 2));
+}
+
+.line.taken.p1 { background-color: var(--p1-color); cursor: default; }
+.line.taken.p2 { background-color: var(--p2-color); cursor: default; }
+
+.box {
+    position: absolute;
+    width: calc(var(--cell-size) - var(--dot-size));
+    height: calc(var(--cell-size) - var(--dot-size));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.2rem;
+    font-weight: bold;
+    z-index: 1;
+    border-radius: 6px;
+    transform: translate(calc(var(--dot-size) / 2), calc(var(--dot-size) / 2));
+    transition: background-color 0.5s ease;
+}
+
+.box.p1 { background-color: rgba(255, 75, 75, 0.25); color: var(--p1-color); }
+.box.p2 { background-color: rgba(30, 144, 255, 0.25); color: var(--p2-color); }
+
+/* Modals */
+.modal {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 10;
+}
+.modal-content {
+    background: #2a2a35; padding: 30px; border-radius: 12px; text-align: center;
+    border: 2px solid #444;
+}
+#letter-input {
+    font-size: 1.8rem; width: 60px; text-align: center; margin-bottom: 20px;
+    text-transform: uppercase; background: #1e1e24; color: white; border: 1px solid #555;
+}
+/* --- TOUCH GESTURE ENHANCEMENTS --- */
+.line {
+    position: absolute;
+    background-color: #3a3a4c;
+    cursor: pointer;
+    z-index: 2;
+    transition: background-color 0.2s, height 0.3s, width 0.3s;
+}
+
+/* Pseudo-elements expand the invisible tap area for fingers without altering visuals */
+.line::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.line.horizontal::before {
+    width: 100%;
+    height: 32px; /* Large 32px vertical tapping cushion */
+}
+.line.vertical::before {
+    width: 32px; /* Large 32px horizontal tapping cushion */
+    height: 100%;
+}
+
+/* --- PROGRESSION PANEL --- */
+.progression-panel {
+    display: none; /* Controlled via JavaScript */
+    background: #2a2a35;
+    border: 2px solid #3a3a4c;
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 15px;
+    text-align: center;
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.progression-panel h3 {
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    color: #4cd137;
+}
+
+.progression-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.prog-btn {
+    padding: 10px 16px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.prog-btn.primary {
+    background: #4cd137;
+    color: white;
+}
+.prog-btn.primary:hover { background: #44bd32; }
+
+.prog-btn.secondary {
+    background: #487eb0;
+    color: white;
+}
+.prog-btn.secondary:hover { background: #40719e; }
+
+/* --- BOARD CROPPING & RATIO CORRECTION --- */
+.board-container {
+    max-height: 85vh !important; /* Allow the container to use the full landscape height */
+    width: auto !important;
+    flex-grow: 1 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    overflow: auto !important; /* Enable scrolling if grid gets huge (e.g., 10x10) */
+}
+
+.board {
+    transform-origin: center center;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    margin: auto !important;
+}
+
+/* --- TOGGLEABLE MINI-MAP COLLAPSE SYSTEM --- */
+.minimap-box.collapsed .minimap-wrapper {
+    display: none !important;
+}
+
+.minimap-header {
+    cursor: pointer;
+    background: #111;
+    padding: 6px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem !important;
+}
+
+.minimap-header::after {
+    content: ' ▾';
+    font-size: 0.8rem;
+}
+.minimap-box.collapsed .minimap-header::after {
+    content: ' ▸';
+}

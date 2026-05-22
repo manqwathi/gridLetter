@@ -1,0 +1,21 @@
+{
+  "short_name": "GridToLetter",
+  "name": "Grid to Letter: Evolution Game",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#23232e",
+  "theme_color": "#4cd137",
+  "display": "standalone",
+  "orientation": "any"
+}
