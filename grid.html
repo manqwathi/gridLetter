@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Grid to Letter</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+<!-- NEW: Animated App Launch Splash Screen -->
+<div id="app-splash-screen">
+    <div class="splash-logo-container">
+        <!-- The logo matrix framework layout -->
+        <div class="splash-icon-mesh">
+            <div class="s-dot pt-tl"></div><div class="s-dot pt-tr"></div>
+            <div class="s-dot pt-bl"></div><div class="s-dot pt-br"></div>
+            <div class="s-box-fill">A</div>
+        </div>
+        <!-- Splashed game name typography -->
+        <h1 class="splash-title">GRID<br><span>TO LETTER</span></h1>
+        <div class="splash-loading-bar"><span></span></div>
+    </div>
+</div>
+
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="dashboard">
+            <!-- Header Row with Space-Saving Action Toggles -->
+            <div class="header-row">
+                <div class="branding">
+                    <div class="profile-icon">🎮</div>
+                    <h1>Grid to Letter</h1>
+                </div>
+                <div class="header-actions">
+                    <button id="leaderboard-trigger-btn" class="icon-btn" title="Leaderboard">🏆</button>
+                    <button id="menu-trigger-btn" class="icon-btn" title="Settings">⚙️</button>
+                </div>
+            </div>
+
+            <div class="scoreboard">
+                <div class="score-card p1 active" id="card-p1">
+                    <div class="player-name">Player 1 (Red)</div>
+                    <div class="player-score" id="score-p1">0</div>
+                    <div class="activity-log" id="log-p1">Placed: 0</div>
+                </div>
+                <div class="score-card p2" id="card-p2">
+                    <div class="player-name" id="p2-label">Player 2 (Blue)</div>
+                    <div class="player-score" id="score-p2">0</div>
+                    <div class="activity-log" id="log-p2">Placed: 0</div>
+                </div>
+            </div>
+            
+            <div id="status">Player 1's Turn</div>
+
+            <div class="minimap-box">
+                <div class="minimap-header">RADAR MINI-MAP</div>
+                <div class="minimap-wrapper">
+                    <div id="minimap-grid" class="minimap-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="board-container">
+            <div class="board" id="board"></div>
+        </div>
+    </div>
+
+    <!-- Centered Match Progression Pop-up Box -->
+    <div id="progression-panel" class="modal">
+        <div class="modal-content progression-box">
+            <h3 id="progression-title">Match Finished!</h3>
+            <div class="progression-buttons">
+                <button id="replay-level-btn" class="prog-btn secondary">Replay Level</button>
+                <button id="next-level-btn" class="prog-btn primary">Upgrade Grid Size (+1)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Top 10 Leaderboard Modal Pop-up Window -->
+    <div id="leaderboard-modal" class="modal">
+        <div class="modal-content settings-box">
+            <h2>🏆 Top 10 High Scores</h2>
+            <div class="leaderboard-container">
+                <ol id="leaderboard-list">
+                    <!-- Dynamic updates via JavaScript will render lists here -->
+                </ol>
+            </div>
+            <div class="modal-actions" style="grid-template-columns: 1fr 1fr;">
+                <button id="clear-leaderboard" class="action-btn danger">Clear Logs</button>
+                <button id="close-leaderboard" class="action-btn success">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configurations Modal Popup Windows -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content settings-box">
+            <h2>Game Configurations</h2>
+            <div class="control-row">
+                <label for="opponent-type">Match Opponent:</label>
+                <select id="opponent-type">
+                    <option value="player">Player 2 (Local)</option>
+                    <option value="ai">AI Bot</option>
+                </select>
+            </div>
+            <div class="control-row">
+                <label>Game Wallpaper Theme:</label>
+                <div class="theme-grid">
+                    <button class="theme-tile default" data-theme="default">Dark</button>
+                    <button class="theme-tile exercise" data-theme="exercise">Exercise</button>
+                    <button class="theme-tile brown" data-theme="brown">Brown</button>
+                    <button class="theme-tile acacia" data-theme="acacia">Acacia</button>
+                    <button class="theme-tile vanilla" data-theme="vanilla">Vanilla</button>
+                </div>
+            </div>
+                        <!-- Theme Customization Option Panel -->
+            <div class="control-row">
+                <label>Game Wallpaper Theme:</label>
+                <div class="theme-grid">
+                    <button class="theme-tile default" data-theme="default">Dark</button>
+                    <button class="theme-tile exercise" data-theme="exercise">Exercise</button>
+                    <button class="theme-tile brown" data-theme="brown">Brown</button>
+                    <button class="theme-tile acacia" data-theme="acacia">Acacia</button>
+                    <button class="theme-tile vanilla" data-theme="vanilla">Vanilla</button>
+                </div>
+            </div>
+
+            <!-- NEW: Dynamic App Installation Control Action Button Slot -->
+            <div class="control-row" id="pwa-install-section" style="margin-top: 15px;">
+                <button id="pwa-install-btn" class="action-btn success" style="width: 100%; font-size: 0.9rem;">
+                    📲 Install Standalone App
+                </button>
+                <p id="pwa-ios-tip" style="display: none; font-size: 0.75rem; color: #aaa; margin: 4px 0 0 0; text-align: center;">
+                    💡 iPhone/iPad: Tap the browser share button, then choose <b>'Add to Home Screen'</b>.
+                </p>
+            </div>
+
+            <div class="modal-actions">
+                <button id="reset-btn" class="action-btn danger">Restart</button>
+                <button id="close-settings" class="action-btn success">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="letter-modal" class="modal">
+        <div class="modal-content">
+            <h3>Square Captured!</h3>
+            <p>Enter initial:</p>
+            <input type="text" id="letter-input" maxlength="1" placeholder="A">
+            <button id="submit-letter">Claim Square</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="dynamic-board.js"></script>
+</body>
+</html>
